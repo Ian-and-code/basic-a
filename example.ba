@@ -1,0 +1,7 @@
+
+SET x, 10.0;
+SET y, 1.0;
+.;
+PRINTLN x;
+SUB x, y;
+JNZ x, 1;
