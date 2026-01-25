@@ -1,6 +1,5 @@
 # execute.nim
 import strutils, tables, math, re
-
 # Parsea una línea del tipo "OP ARG1, ARG2, ..."
 proc parseLine(o: string): tuple[op: string, argv: seq[string], argc: int] =
   let cleanLine = o.strip()
@@ -38,6 +37,10 @@ proc execute*(code: string) =
   let lines = code.strip().splitLines()
   var index = 0
 
+  proc get(o: string): string =
+    try: return vars[o]
+    except: return o
+
   while index < lines.len:
 
     if isBlankOrSemicolon(lines[index]):
@@ -49,41 +52,49 @@ proc execute*(code: string) =
     of "SET":
       vars[li.argv[0]] = li.argv[1]
     of "ADD":
-      vars[li.argv[0]] = $((vars[li.argv[0]].parseFloat()) + (vars[li.argv[1]].parseFloat()))
+      vars[li.argv[0]] = $((get(li.argv[0]).parseFloat()) + (get(li.argv[1]).parseFloat()))
     of "SUB":
-      vars[li.argv[0]] = $((vars[li.argv[0]].parseFloat()) - (vars[li.argv[1]].parseFloat()))
+      vars[li.argv[0]] = $((get(li.argv[0]).parseFloat()) - (get(li.argv[1]).parseFloat()))
     of "MUL":
-      vars[li.argv[0]] = $((vars[li.argv[0]].parseFloat()) * (vars[li.argv[1]].parseFloat()))
+      vars[li.argv[0]] = $((get(li.argv[0]).parseFloat()) * (get(li.argv[1]).parseFloat()))
     of "DIV":
-      vars[li.argv[0]] = $((vars[li.argv[0]].parseFloat()) / (vars[li.argv[1]].parseFloat()))
+      vars[li.argv[0]] = $((get(li.argv[0]).parseFloat()) / (get(li.argv[1]).parseFloat()))
     of "POW":
-      vars[li.argv[0]] = $(math.pow(vars[li.argv[0]].parseFloat(), vars[li.argv[1]].parseFloat()))
+      vars[li.argv[0]] = $(math.pow(get(li.argv[0]).parseFloat(), get(li.argv[1]).parseFloat()))
     of "SQRT":
-      vars[li.argv[0]] = $(math.sqrt(vars[li.argv[0]].parseFloat()))
+      vars[li.argv[0]] = $(math.sqrt(get(li.argv[0]).parseFloat()))
     of "PRINT":
-      var v: string = ""
-      try:
-        v = if vars.hasKey(li.argv[0]): vars[li.argv[0]] else: li.argv[0]
-      except:
-        v = ""
+      var v: string = get(li.argv[0])
       stdout.write(v)
     of "PRINTLN":
-      var v: string = ""
-      try:
-        v = if vars.hasKey(li.argv[0]): vars[li.argv[0]] else: li.argv[0]
-      except:
-        v = ""
+      var v: string = get(li.argv[0])
       stdout.write(v, "\n")
     of "JMP":
       index = li.argv[0].parseInt()
       continue
     of "JZ":
-      if vars[li.argv[0]].parseFloat() == 0:
+      if get(li.argv[0]).parseFloat() == 0:
         index = li.argv[1].parseInt()
         continue
     of "JNZ":
-      if vars[li.argv[0]].parseFloat() != 0:
+      if get(li.argv[0]).parseFloat() != 0:
         index = li.argv[1].parseInt()
+        continue
+    of "JE":
+      if get(li.argv[0]) == get(li.argv[1]):
+        index = li.argv[2].parseInt()
+        continue
+    of "JNE":
+      if get(li.argv[0]) != get(li.argv[1]):
+        index = li.argv[2].parseInt()
+        continue
+    of "JLT":
+      if get(li.argv[0]).parseFloat() < get(li.argv[1])parseFloat():
+        index = li.argv[2].parseInt()
+        continue
+    of "JGT":
+      if get(li.argv[0]).parseFloat() > get(li.argv[1]).parseFloat():
+        index = li.argv[2].parseInt()
         continue
     of "END":
       break

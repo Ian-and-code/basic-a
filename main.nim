@@ -1,9 +1,17 @@
+# main.nim
 import os, strutils, execute
+
 when isMainModule:
-  if commandLineParams().len == 0:
-    quit("Uso: ./interpreter archivo.ba")
-  let filename = commandLineParams()[0]
-  if not fileExists(filename):
-    quit("Archivo no existe: " & filename)
-  let code = readFile(filename)
-  execute(code)
+  if paramCount() >= 2 and paramStr(1) == "-c":
+    # Tomamos el código pasado como argumento
+    let codeSnippet = paramStr(2)
+    execute(codeSnippet)  # Ejecuta el snippet directamente
+  elif paramCount() >= 1:
+    let filename = paramStr(1)
+    if fileExists(filename):
+      let code = readFile(filename)
+      execute(code)
+    else:
+      echo "Archivo no encontrado: ", filename
+  else:
+    echo "Uso: basic-a <archivo.ba> | -c \"codigo\""
