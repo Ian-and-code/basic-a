@@ -1,0 +1,19 @@
+SETN A, 10
+SETN B, 2
+
+ADD A, B
+PRINTLN A ; 12
+
+SUB A, B
+PRINTLN A ; 10
+
+MUL A, B
+PRINTLN A ; 20
+
+DIV A, B
+PRINTLN A ; 10
+
+; Tipos incompatibles
+SETS S, texto
+;ADD A, S debería mostrar error
+END

@@ -1,0 +1,6 @@
+PRINTLN Antes de sleep
+SLEEP 1000
+PRINTLN Después de sleep
+
+END
+PRINTLN No debería ejecutarse
