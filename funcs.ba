@@ -1,0 +1,7 @@
+SETS a0, ian
+CALL println
+END
+
+: println
+PRINTLN a0
+RETURN

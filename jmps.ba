@@ -4,13 +4,12 @@ ADD N, 1
 PRINTLN N
 JLT N, 5, SET_START ; bucle hasta 5
 
-SETL fin, 13; para definir label antes de la linea correspondienete, y pq no puedes acceder a label no declarado / definido hasta el momento
-
 ; JE / JNE
 SETN X, 5
 SETN Y, 5
-JE X, Y, 12
+JE X, Y, fin
 PRINTLN NO debería aparecer
+. fin
 PRINTLN JE funcionó
 
 SETN X, 10
